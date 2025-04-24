@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件、网址分享中心</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --glass: rgba(255, 255, 255, 0.15);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius: 12px;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+        }
+
+        @font-face {
+            font-family: 'Inter';
+            src: local('Inter'), url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: var(--spacing-xl) 0;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s 0.2s forwards;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .platform-nav {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-xl);
+            position: sticky;
+            top: var(--spacing-md);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: var(--glass);
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .platform-tab {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: calc(var(--border-radius) / 2);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-tab::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: currentColor;
+            transition: var(--transition);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .platform-tab.active {
+            color: white;
+        }
+
+        .platform-tab.active::before {
+            width: 80%;
+        }
+
+        .platform-tab.pc-tab {
+            color: var(--primary);
+        }
+
+        .platform-tab.pc-tab.active {
+            background: var(--primary);
+        }
+
+        .platform-tab.android-tab {
+            color: var(--success);
+        }
+
+        .platform-tab.android-tab.active {
+            background: var(--success);
+        }
+
+        .platform-section {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .platform-section.active {
+            display: grid;
+            animation: fadeIn 0.5s;
+        }
+
+        .file-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .file-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .pc .file-card::before {
+            background: var(--primary);
+        }
+
+        .android .file-card::before {
+            background: var(--success);
+        }
+
+        .file-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: var(--spacing-xs);
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .file-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #64748b;
+            font-size: 0.85rem;
+            margin: var(--spacing-sm) 0;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            text-align: center;
+            border-radius: calc(var(--border-radius) / 2);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+        }
+
+        .pc .action-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .android .action-btn {
+            background: var(--success);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-btn.secondary {
+            background: white;
+            color: var(--dark);
+            border: 1px solid #e2e8f0;
+        }
+
+        .action-btn.secondary:hover {
+            background: #f8fafc;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: var(--spacing-xl);
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .platform-nav {
+                flex-direction: column;
+                gap: var(--spacing-xs);
+            }
+
+            .platform-section {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* 卡片动画延迟 */
+        .file-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .file-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .file-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .file-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        /* 图标样式 */
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+		
+		/* 导航按钮激活状态 */
+		.platform-tab.active {
+		    position: relative;
+		    z-index: 10;
+		    background: rgba(255,255,255,0.95);
+		    border: 2px solid currentColor;
+		    color: var(--text-primary) !important; /* 强制文字颜色 */
+		    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+		    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+		}
+		
+		/* 增加平台色点缀 */
+		.platform-tab::after {
+		    content: "";
+		    position: absolute;
+		    bottom: -2px;
+		    left: 0;
+		    right: 0;
+		    height: 2px;
+		    background: currentColor;
+		    opacity: 0.3;
+		    transition: opacity 0.3s;
+		}
+		
+		.platform-tab.active::after {
+		    opacity: 1;
+		}
+		
+		/* 移动端优化 */
+		@media (max-width: 768px) {
+		    .platform-tab.active {
+		        box-shadow: inset 0 0 0 2px currentColor;
+		    }
+		}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>文件、网址分享中心</h1>
+            <p class="subtitle">各类实用资源</p>
+        </header>
+
+        <div class="platform-nav">
+            <div class="platform-tab pc-tab active" onclick="showPlatform('pc')">
+                <span class="icon">💻</span>
+                <span>PC 软件</span>
+            </div>
+            <div class="platform-tab android-tab" onclick="showPlatform('android')">
+                <span class="icon">📱</span>
+                <span>Android 软件</span>
+            </div>
+        </div>
+
+        <!-- PC平台 -->
+        <div class="platform-section pc active">
+            <div class="file-card">
+                <h3>
+                    <span class="img-container">
+						<img src="ico/logo.ico" style="width: 40px; height: 40px;">
+					</span>
+                    <span>PCL2 CE(社区版)</span>
+                </h3>
+				<div>
+					<span>PCL2的社区版本，功能更丰富</span>
+				</div>
+                <div class="file-meta">
+                    <span>分享创建日期：2025-04-23</span>
+                    <span>约5MB</span>
+                </div>
+                <div class="file-actions">
+                    <a href="https://github.pcl2ce.dpdns.org/download.html" target="_blank" class="action-btn">
+                        <span class="icon">⬇️</span>
+                        <span>点击前往</span>
+                    </a>
+                </div>
+            </div>
+
+            
+            <div class="file-card">
+                <h3>
+                    <span class="img-container">
+            			<img src="ico/bk.png" style="width: 40px; height: 40px;">
+            		</span>
+                    <span>MC百科-整合包</span>
+                </h3>
+				<div>
+					<span>整合包页面，懒人专用导航</span>
+				</div>
+                <div class="file-meta">
+                    <span>分享创建日期：2025-04-23</span>
+                </div>
+                <div class="file-actions">
+                    <a href="https://www.mcmod.cn/modpack.html" target="_blank" class="action-btn">
+                        <span class="icon">⬇️</span>
+                        <span>点击前往</span>
+                    </a>
+                </div>
+            </div>
+			
+			<div class="file-card">
+			    <h3>
+			        <span class="img-container">
+						<img src="ico/bk.png" style="width: 40px; height: 40px;">
+					</span>
+			        <span>MC百科-搜索</span>
+			    </h3>
+				<div>
+					<span>搜索页面，懒人专用导航</span>
+				</div>
+			    <div class="file-meta">
+			        <span>分享创建日期：2025-04-23</span>
+			    </div>
+			    <div class="file-actions">
+			        <a href="https://search.mcmod.cn/" target="_blank" class="action-btn">
+			            <span class="icon">⬇️</span>
+			            <span>点击前往</span>
+			        </a>
+			    </div>
+			</div>
+			
+			<div class="file-card">
+			    <h3>
+			        <span class="img-container">
+						<img src="ico/bk.png" style="width: 40px; height: 40px;">
+					</span>
+			        <span>MC百科-模组</span>
+			    </h3>
+				<div>
+					<span>模组页面，懒人专用导航</span>
+				</div>
+			    <div class="file-meta">
+			        <span>分享创建日期：2025-04-23</span>
+			    </div>
+			    <div class="file-actions">
+			        <a href="https://www.mcmod.cn/modlist.html" target="_blank" class="action-btn">
+			            <span class="icon">⬇️</span>
+			            <span>点击前往</span>
+			        </a>
+			    </div>
+			</div>
+			
+			<div class="file-card">
+			    <h3>
+			        <span class="img-container">
+						<img src="ico/steam.png" style="width: 40px; height: 40px;">
+					</span>
+			        <span>steam客户端</span>
+			    </h3>
+				<div>
+					<span>steam客户端直接下载</span>
+				</div>
+			    <div class="file-meta">
+			        <span>分享创建日期：2025-04-23</span>
+					<span>约2.3MB</span>
+			    </div>
+			    <div class="file-actions">
+			        <a href="https://media.st.dl.eccdnx.com/client/installer/SteamSetup.exe" target="_blank" class="action-btn">
+			            <span class="icon">⬇️</span>
+			            <span>点击下载</span>
+			        </a>
+			    </div>
+			</div>
+			
+			<div class="file-card">
+			    <h3>
+			        <span class="img-container">
+						<img src="ico/vs.png" style="width: 40px; height: 40px;">
+					</span>
+			        <span>VS Code</span>
+			    </h3>
+				<div>
+					<span>代码编辑软件</span>
+				</div>
+			    <div class="file-meta">
+			        <span>分享创建日期：2025-04-23</span>
+					<span>约103MB</span>
+			    </div>
+			    <div class="file-actions">
+			        <a href="https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" target="_blank" class="action-btn">
+			            <span class="icon">⬇️</span>
+			            <span>点击下载</span>
+			        </a>
+			    </div>
+			</div>
+			
+			<div class="file-card">
+			    <h3>
+			        <span class="img-container">
+						<img src="ico/vs-icon.svg" style="width: 40px; height: 40px;">
+					</span>
+			        <span>Visual Studio2022</span>
+			    </h3>
+				<div>
+					<span>软件编写软件</span>
+				</div>
+			    <div class="file-meta">
+			        <span>分享创建日期：2025-04-23</span>
+					<span>约4.2MB</span>
+			    </div>
+			    <div class="file-actions">
+			        <a href="https://c2rsetup.officeapps.live.com/c2r/downloadVS.aspx?sku=community&channel=Release&version=VS2022&source=VSLandingPage&cid=2030:1812965fdd0546d8869320683fccf30f" target="_blank" class="action-btn">
+			            <span class="icon">⬇️</span>
+			            <span>点击下载</span>
+			        </a>
+			    </div>
+			</div>
+			
+			<div class="file-card">
+			    <h3>
+			        <span class="img-container">
+						<img src="ico/qb.jpg" style="width: 40px; height: 40px;">
+					</span>
+			        <span>qBittorrent</span>
+			    </h3>
+				<div>
+					<span>种子文件下载器，非官方下载地址</span>
+				</div>
+			    <div class="file-meta">
+			        <span>分享创建日期：2025-04-23</span>
+					<span>约38.1MB</span>
+			    </div>
+			    <div class="file-actions">
+			        <a href="https://www.techspot.com/downloads/5292-qbittorrent.html" target="_blank" class="action-btn">
+			            <span class="icon">⬇️</span>
+			            <span>点击前往</span>
+			        </a>
+			    </div>
+			</div>
+		</div>
+
+        <!-- Android平台 -->
+        <div class="platform-section android">
+			
+            <!-- <div class="file-card">
+                <h3>
+                    <span class="icon">📱</span>
+                    <span>移动端 APP v1.4.2</span>
+                </h3>
+                <div class="file-meta">
+                    <span>2025-04-22</span>
+                    <span>82MB</span>
+                </div>
+                <div class="file-actions">
+                    <a href="#android-apk" class="action-btn">
+                        <span class="icon">📥</span>
+                        <span>APK 下载</span>
+                    </a>
+                    <a href="#android-play" class="action-btn secondary">
+                        <span class="icon">🛒</span>
+                        <span>商店安装</span>
+                    </a>
+                </div>
+            </div> -->
+			
+			<div>
+				<h1>正在装修</h1>
+			</div>
+        </div>
+
+        <div class="footer">
+            <p>最后更新时间为 2025-04-23</p>
+            <p>zitianwork.github.io</p>
+        </div>
+    </div>
+
+    <script>
+        function showPlatform(platform) {
+            // 切换导航激活状态
+            document.querySelectorAll('.platform-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // 切换内容显示
+            document.querySelectorAll('.platform-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelector(`.platform-section.${platform}`).classList.add('active');
+        }
+
+        // 卡片动画触发
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.file-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            cards.forEach(card => {
+                card.style.animationPlayState = 'paused';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

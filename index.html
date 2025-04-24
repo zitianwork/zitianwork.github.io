@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 增强视口设置 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+		<!-- iOS 全屏支持 -->
+		    <meta name="apple-mobile-web-app-capable" content="yes">
+		    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>小工具网页</title>
+    <style>
+        :root {
+            /* 色彩系统 */
+            --bg-color: #0A192F;
+            --primary-accent: #00F7FF;
+            --secondary-accent: #6B00FF;
+            --text-primary: #E6F1FF;
+            --text-secondary: #8892B0;
+            
+            /* 间距系统 */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 2rem;
+            --space-xl: 4rem;
+            
+            /* 圆角系统 */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 16px;
+            
+            /* 阴影系统 */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+            
+            /* 动效时长 */
+            --duration-fast: 0.2s;
+            --duration-normal: 0.4s;
+            --duration-slow: 0.8s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+			/* 触摸高亮优化 */
+			-webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            width: 100vw;
+            min-height: 100vh;  /* 改为min-height防止内容截断 */
+            overflow-x: hidden; /* 仅限制横向溢出 */
+            background: var(--bg-color);
+            position: relative;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-primary);
+            line-height: 1.6;
+            /* 防止字体缩放异常 */
+            text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        /* 主内容容器 */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: var(--space-xl);
+            min-height: 100vh; /* 保证全屏高度 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* 标题样式 */
+        .title {
+            font-size: clamp(2rem, 8vw, 3.5rem); /* 调整vw比例 */
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp var(--duration-slow) ease-out forwards;
+            /* 防止文本换行异常 */
+            word-break: keep-all;
+            overflow-wrap: anywhere;
+        }
+
+        /* 副标题 */
+        .subtitle {
+            font-size: clamp(0.875rem, 3vw, 1.25rem); /* 调整响应式范围 */
+            color: var(--text-secondary);
+            margin-bottom: var(--space-xl);
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp var(--duration-slow) ease-out var(--duration-fast) forwards;
+            line-height: 1.5;
+        }
+
+        /* 卡片容器 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* 调整最小宽度 */
+            gap: var(--space-lg);
+            margin-top: var(--space-xl);
+            padding: 0 var(--space-xs); /* 防止边缘溢出 */
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--duration-normal) ease;
+            opacity: 0;
+            transform: translateY(20px);
+            min-height: 140px; /* 保证最小触控区域 */
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 247, 255, 0.1);
+            border-color: rgba(0, 247, 255, 0.3);
+        }
+
+        /* 卡片动画延迟 */
+        .card:nth-child(1) {
+            animation: fadeInUp var(--duration-slow) ease-out calc(var(--duration-fast) * 2) forwards;
+        }
+        .card:nth-child(2) {
+            animation: fadeInUp var(--duration-slow) ease-out calc(var(--duration-fast) * 3) forwards;
+        }
+        .card:nth-child(3) {
+            animation: fadeInUp var(--duration-slow) ease-out calc(var(--duration-fast) * 4) forwards;
+        }
+
+        /* 卡片标题 */
+        .card-title {
+             font-size: 1.15rem; /* 减小字号 */
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+            color: var(--primary-accent);
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title svg {
+            margin-right: var(--space-sm);
+            width: 20px; /* 缩小图标 */
+            height: 20px;
+        }
+
+        /* 卡片内容 */
+        .card-content {
+            color: var(--text-secondary);
+            font-size: 0.9rem; /* 减小字号 */
+            line-height: 1.6;
+        }
+
+        /* 页脚 */
+        .footer {
+            position: absolute;
+            bottom: var(--space-lg);
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            opacity: 0;
+            animation: fadeIn var(--duration-slow) ease-out calc(var(--duration-fast) * 5) forwards;
+        }
+		
+        /* 动画定义 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* 动态渐变层 */
+        .gradient-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                45deg, 
+                var(--secondary-accent),
+                var(--primary-accent)
+            );
+            mix-blend-mode: screen;
+            opacity: 0.15;
+            animation: gradientFlow 12s linear infinite;
+        }
+
+        /* 粒子容器 */
+        .particles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            filter: blur(1px);
+        }
+
+        /* 单个粒子样式 */
+        .particle {
+            position: absolute;
+            background: var(--primary-accent);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleFloat 5s ease-in-out infinite;
+        }
+
+        /* 渐变流动动画 */
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 粒子漂浮动画 */
+        @keyframes particleFloat {
+            0%, 100% { 
+                transform: translateY(0) scale(1);
+                opacity: 0.4; 
+            }
+            50% { 
+                transform: translateY(-150px) scale(1.3);
+                opacity: 0.8;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: var(--space-md); /* 减小内边距 */
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-md); /* 减小间距 */
+            }
+
+            .card {
+                padding: var(--space-md) var(--space-sm); /* 调整内边距 */
+                min-height: 120px; /* 调整触控区域 */
+            }
+
+            .card-title {
+                font-size: 1rem;
+            }
+
+            .card-title svg {
+                width: 18px;
+                height: 18px;
+            }
+        }
+		
+		 /* 超小屏幕优化 */
+        @media (max-width: 480px) {
+            .title {
+                font-size: clamp(1.75rem, 9vw, 2.5rem); /* 调整响应式范围 */
+            }
+            
+            .subtitle {
+                font-size: clamp(0.8rem, 3.5vw, 1rem);
+            }
+        }
+		
+		/* a标签去下划线 */
+		a	{
+			text-decoration: none;
+			color: #00F7FF;
+		}
+    </style>
+</head>
+<body>
+    <div class="gradient-overlay"></div>
+    <div class="particles-container"></div>
+
+    <div class="main-container">
+        <h1 class="title">子天的小工具网页</h1>
+        <p class="subtitle">分享各类实用软件和教程，帮助更多有需要的人</p>
+        
+        <div class="card-grid">
+            <div class="card">
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                        <polyline points="13 2 13 9 20 9"></polyline>
+                    </svg>
+                    <a href="file.html">文件资源分享(点我)</a>
+                </h3>
+                <div class="card-content">
+                    一些实用的小软件，可以在日常生活和游戏中用到，经过收集、整理和排版，最后罗列下来，内容包括Windows，Android和极少数的Ios应用
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 8v4l3 3"></path>
+                    </svg>
+                    <a href="">教程(点我)</a>
+                </h3>
+                <div class="card-content">
+                    各种傻瓜式的教学，从互联网收集并简化，帮助子天减少压力负担(doge)
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <a href="">其他内容(点我)</a>
+                </h3>
+                <div class="card-content">
+                    一些没什么实质性的内容
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            最后更新时间为2025-04-23；网址：zitianwork.github.io
+        </div>
+    </div>
+
+    <script>
+        // 粒子系统配置
+        const particleConfig = {
+            count: 80,           // 粒子总数
+            sizeRange: [1, 3],  // 尺寸范围(px)
+            speedFactor: 0.5,    // 动画速度系数
+            colorVariation: 15   // 颜色变化幅度
+        }
+
+        // 创建粒子
+        function createParticles() {
+            const container = document.querySelector('.particles-container');
+            
+            for(let i=0; i<particleConfig.count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+
+                // 动态属性生成
+                const size = Math.random() * 
+                    (particleConfig.sizeRange[1] - particleConfig.sizeRange[0]) 
+                    + particleConfig.sizeRange[0];
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const delay = Math.random() * 5;
+                const duration = 3 + Math.random() * 3;
+
+                // 设置粒子样式
+                particle.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}%;
+                    top: ${y}%;
+                    animation-delay: -${delay}s;
+                    animation-duration: ${duration * particleConfig.speedFactor}s;
+                `;
+
+                container.appendChild(particle);
+            }
+        }
+
+        // 初始化
+        window.addEventListener('load', () => {
+            createParticles();
+            
+            // 窗口尺寸变化重置
+            window.addEventListener('resize', () => {
+                document.querySelector('.particles-container').innerHTML = '';
+                createParticles();
+            });
+
+            // 卡片交互动画
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-5px)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
