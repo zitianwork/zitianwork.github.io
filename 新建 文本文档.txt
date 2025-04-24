@@ -2,13 +2,7 @@
 <html lang="zh-CN" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" 
-     content="width=device-width,
-             initial-scale=1.0,
-             maximum-scale=1.0,
-             minimum-scale=1.0,
-             user-scalable=no,
-             viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文件、网址分享中心</title>
     <style>
         :root {
@@ -280,39 +274,27 @@
                     to { width: 60%; opacity: 1; }
                 }
         
-                @media (max-width: 480px) {
-                  .platform-nav {
-                    flex-direction: column;
-                    width: 100%;
-                    max-width: 100vw;
-                    overflow-x: hidden;
-                  }
-                
-                  .platform-tab {
-                    width: 100%;
-                    padding: var(--spacing-xs);
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                  }
-                
-                  h1 {
-                    font-size: calc(2rem + 2vw);
-                    line-height: 1.2;
-                  }
+                /* 响应式优化 */
+                @media (max-width: 768px) {
+                    .platform-nav {
+                        width: 100%;
+                        justify-content: center;
+                    }
+                    
+                    .platform-tab {
+                        flex: 1;
+                        justify-content: center;
+                        padding: 0.75rem;
+                    }
+                    
+                    .file-card {
+                        margin-bottom: var(--spacing-xs);
+                    }
+                    
+                    h1 {
+                        font-size: 2.25rem;
+                    }					
                 }
-				
-			    /* 通用溢出防护 */
-			    .container {
-			      overflow-x: hidden;
-			      padding-left: max(env(safe-area-inset-left), var(--spacing-xs));
-			      padding-right: max(env(safe-area-inset-right), var(--spacing-xs));
-			    }
-			    
-			    .platform-tab {
-			      max-width: 100%;
-			      word-break: break-word;
-			    }
 
         body {
             background: var(--bg-gradient-light);
