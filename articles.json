@@ -5,14 +5,16 @@
     "excerpt": "手把手教你如何下载PCL与安装MC整合包",
     "date": "2025-8-24",
     "author": "zitian",
-    "category": "技术教程",
+    "category": "教程",
     "tags": ["下载", "Minecraft", "整合包"],
     "readTime": "3分钟",
     "image": "https://www.gy328.com/wp-content/uploads/2024/12/1733157660-PC2-PIC.jpg",
     "content": [
-      {"type": "paragraph", "text": "awa"},
-      {"type": "heading", "level": 2, "text": "PCL下载链接"},
-      {"type": "paragraph", "text": "首先，在蓝奏云下载PCL"}
+      {"type": "paragraph", "text": "帮你更轻松的使用PCL"},
+      {"type": "heading", "level": 2, "text": "PCL下载"},
+      {"type": "paragraph", "text": "复制链接：https://afdian.com/p/0164034c016c11ebafcb52540025c377进行下载，然后解压到一个空文件夹，一定要是空的！！！"},
+	  {"type": "heading", "level": 2, "text": "下载原版"},
+	  {"type": "paragraph", "text": "首先，双击PCL启动，点击下载"}
     ]
   },
   {
