@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "title": "PCL下载与使用",
+    "excerpt": "手把手教你如何下载PCL与安装MC整合包",
+    "date": "2025-8-24",
+    "author": "zitian",
+    "category": "技术教程",
+    "tags": ["下载", "Minecraft", "整合包"],
+    "readTime": "3分钟",
+    "image": "https://www.gy328.com/wp-content/uploads/2024/12/1733157660-PC2-PIC.jpg",
+    "content": [
+      {"type": "paragraph", "text": "awa"},
+      {"type": "heading", "level": 2, "text": "PCL下载链接"},
+      {"type": "paragraph", "text": "首先，在蓝奏云下载PCL"}
+    ]
+  },
+  {
+    "id": 2,
+    "title": "现代Web开发趋势",
+    "excerpt": "探索2023年最前沿的Web开发技术和趋势",
+    "date": "2023-10-15",
+    "author": "前端工程师",
+    "category": "前端开发",
+    "tags": ["Web开发", "JavaScript", "趋势"],
+    "readTime": "10分钟",
+    "image": "https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    "content": [
+      {"type": "paragraph", "text": "随着技术的不断发展，Web开发领域也在快速变化..."}
+    ]
+  }
+]
