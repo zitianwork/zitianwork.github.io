@@ -13,7 +13,7 @@
       {"type": "paragraph", "text": "帮你更轻松的使用PCL"},
       {"type": "heading", "level": 2, "text": "PCL下载"},
       {"type": "paragraph", "text": "复制链接：https://afdian.com/p/0164034c016c11ebafcb52540025c377进行下载，然后解压到一个空文件夹，一定要是空的！！！"},
-	  {"type": "image", "url": "https://www.img520.com/bMV8zy.png", "alt": "PCL界面截图"}, 
+	  {"type": "image", "src": "https://www.img520.com/bMV8zy.png", "alt": "PCL下载界面截图"},
 	  {"type": "heading", "level": 2, "text": "下载原版"},
 	  {"type": "paragraph", "text": "首先，双击PCL启动，点击下载"}
     ]

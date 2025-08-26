@@ -199,7 +199,6 @@
         }
         
         .error-icon {
-            font-size: .error-icon {
             font-size: 2.5rem;
             color: var(--secondary);
             margin-bottom: 15px;
@@ -224,7 +223,6 @@
         
         .error-solution h4 {
             margin-bottom: 15px;
-            color-bottom: 15px;
             color: var(--dark);
         }
         
@@ -508,6 +506,14 @@
             align-items: center;
         }
         
+        .article-author img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        
         .article-image {
             width: 100%;
             height: 450px;
@@ -548,8 +554,6 @@
             font-size: 1.5rem;
             margin: 40px 0 15px;
             color: var(--dark);
-        }
- color: var(--dark);
         }
         
         .article-body p {
@@ -691,7 +695,7 @@
             <div class="controls">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="search-input type="text" id="search-input" placeholder="搜索文章..." disabled>
+                    <input type="text" id="search-input" placeholder="搜索文章..." disabled>
                 </div>
                 <div class="category-filter">
                     <i class="fas fa-filter"></i>
@@ -745,7 +749,6 @@
                 
                 // 启用搜索和筛选
                 document.getElementById('search-input').disabled = false;
-                document.getElementById').disabled = false;
                 document.getElementById('category-select').disabled = false;
                 
             } catch (error) {
@@ -772,7 +775,6 @@
                         </ol>
                         
                         <p style="margin-top: 15px;">2. 确保浏览器为edge(其他尚未测试)</p>
-                        <p>3. >
                         <p>3. 刷新页面重新加载</p>
                         
                         <button id="retry-button" style="margin-top: 20px; padding: 12px 25px; background: var(--accent); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer;">
@@ -787,7 +789,6 @@
         }
         
         // 渲染文章列表
-               // 渲染文章列表
         function renderArticles() {
             const grid = document.getElementById('articles-grid');
             grid.innerHTML = '';
@@ -973,20 +974,20 @@
             detailContainer.innerHTML = `
                 <a href="#" class="back-to-list" id="back-to-list"><i class="fas fa-arrow-left"></i> 返回文章列表</a>
                 
-                <div class</a>
-                
                 <div class="article-header">
                     <h1 class="article-title">${article.title}</h1>
                     <div class="article-meta">
-                        <span><i class="far fa-user"></i> ${article.author}</span>
-                        <span><i class="far fa-calendar-alt"></i> ${article.date}</span>
-                        <span>${article.category}</span>
-                        <span><i class="far fa-clock"></i> ${article.readTime}</span>
+                        <div class="article-author">
+                            <alt="作者">
+                            <span>${article.author}</span>
+                        </div>
+                        <div class="article-date"><i class="far fa-calendar-alt"></i> ${article.date}</div>
+                        <div class="article-category">${article.category}</div>
+                        <div><i class="far fa-clock"></i> ${article.readTime}</div>
                     </div>
                 </div>
                 
                 <div class="article-image">
-                    <img src="article-image">
                     <img src="${article.image}" alt="${article.title}">
                 </div>
                 
@@ -1037,13 +1038,7 @@
                         html += `<h${item.level}>${item.text}</h${item.level}>`;
                         break;
                     case 'image':
-                        // 兼容url和src两种字段名
-                        const imgSrc = item.src || item.url;
-                        // 添加alt文本（如果有）
-                        const altText = item.alt || "文章图片";
-                        html += `<div class="article-image">
-                            <img src="${imgSrc}" alt="${altText}">
-                        </div>`;
+                        html += `<div class="article-image"><img src="${item.src}" alt="${item.alt}"></div>`;
                         break;
                     case 'blockquote':
                         html += `<blockquote>${item.text}</blockquote>`;
